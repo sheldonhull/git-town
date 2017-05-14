@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"path/filepath"
 	"strings"
 
 	"github.com/Originate/git-town/src/util"
@@ -178,7 +179,7 @@ func ShouldBranchBePushed(branchName string) bool {
 // Helpers
 
 func getCurrentBranchNameDuringRebase() string {
-	filename := fmt.Sprintf("%s/.git/rebase-apply/head-name", GetRootDirectory())
+	filename := fmt.Sprintf(filepath.Join("%s", ".git", "rebase-apply", "head-name"), GetRootDirectory())
 	rawContent, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Fatal(err)

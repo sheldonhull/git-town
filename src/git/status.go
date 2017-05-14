@@ -3,6 +3,7 @@ package git
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/Originate/git-town/src/util"
 )
@@ -44,7 +45,7 @@ func HasShippableChanges(branchName string) bool {
 // IsMergeInProgress returns whether the local repository is in the middle of
 // an unfinished merge process.
 func IsMergeInProgress() bool {
-	_, err := os.Stat(fmt.Sprintf("%s/.git/MERGE_HEAD", GetRootDirectory()))
+	_, err := os.Stat(fmt.Sprintf(filepath.Join("%s", ".git", "MERGE_HEAD"), GetRootDirectory()))
 	return err == nil
 }
 

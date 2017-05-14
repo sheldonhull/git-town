@@ -2,6 +2,8 @@ package steps
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/Originate/git-town/src/git"
@@ -33,5 +35,5 @@ type SerializedRunState struct {
 }
 
 func getRunResultFilename(command string) string {
-	return fmt.Sprintf("/tmp/%s_%s", command, strings.Replace(git.GetRootDirectory(), "/", "_", -1))
+	return fmt.Sprintf(filepath.Join(os.TempDir(), "%s_%s"), command, strings.Replace(git.GetRootDirectory(), os.PathSeparator, "_", -1))
 }
