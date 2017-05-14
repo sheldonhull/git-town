@@ -1,9 +1,22 @@
-install:
-  - set PATH=C:\Ruby23\bin;%PATH%
-  - bundle install
+version: "{build}"
+
+os: Windows Server 2012 R2
+
+clone_folder: c:\gopath\src\github.com\Originate\git-town
+
+environment:
+  GOPATH: c:\gopath
 
 init:
   - git config --global core.autocrlf true
+
+install:
+  - set PATH=%GOPATH%\bin;%PATH%
+  - go version
+  - go get github.com/Masterminds/glide
+  - glide install
+  - set PATH=C:\Ruby23\bin;%PATH%
+  - bundle install
 
 before_test:
   - ruby -v
@@ -17,3 +30,4 @@ test_script:
 skip_branch_with_pr: true
 
 build: off
+deploy: off
