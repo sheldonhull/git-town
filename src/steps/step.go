@@ -35,5 +35,6 @@ type SerializedRunState struct {
 }
 
 func getRunResultFilename(command string) string {
-	return fmt.Sprintf(filepath.Join(os.TempDir(), "%s_%s"), command, strings.Replace(git.GetRootDirectory(), os.PathSeparator, "_", -1))
+	template := filepath.Join(os.TempDir(), "%s_%s")
+	return fmt.Sprintf(template, command, strings.Replace(git.GetRootDirectory(), string(os.PathSeparator), "_", -1))
 }
