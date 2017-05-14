@@ -10,8 +10,8 @@ Feature: git-new-pull-request when origin is on Bitbucket
     And my remote origin is <ORIGIN>
     And I have "open" installed
     And I am on the "feature" branch
-    When I run `git town-new-pull-request`
-    Then I see a new Bitbucket pull request for the "feature" branch in the "<REPOSITORY>" repo in my browser
+    When I run `git-town new-pull-request`
+    Then I see a new Bitbucket pull request for the "feature" branch against the "main" branch in the "<REPOSITORY>" repo in my browser
 
     Examples:
       | ORIGIN                                                            | REPOSITORY                     |
@@ -28,3 +28,5 @@ Feature: git-new-pull-request when origin is on Bitbucket
       | https://username@bitbucket.org/Originate/originate.github.com     | Originate/originate.github.com |
       | git@bitbucket.org/Originate/originate.github.com.git              | Originate/originate.github.com |
       | git@bitbucket.org/Originate/originate.github.com                  | Originate/originate.github.com |
+      | ssh://git@bitbucket.org/Originate/git-town.git                    | Originate/git-town             |
+      | ssh://git@bitbucket.org/Originate/git-town                        | Originate/git-town             |

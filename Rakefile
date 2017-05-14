@@ -18,11 +18,11 @@ end
 
 # Linters
 desc 'Run linters'
-task lint: %w(lint:bash lint:ruby lint:cucumber)
+task lint: %w(lint:go lint:ruby lint:cucumber)
 
-desc 'Run bash linter'
-task 'lint:bash' do
-  sh 'bin/lint'
+desc 'Run Go linter'
+task 'lint:go' do
+  sh 'bin/lint_go'
 end
 
 desc 'Run Ruby linter'

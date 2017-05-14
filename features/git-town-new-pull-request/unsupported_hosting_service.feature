@@ -8,9 +8,9 @@ Feature: git-new-pull-request: when origin is unsupported
   Background:
     Given I have a feature branch named "feature"
     And I am on the "feature" branch
-    When I run `git town-new-pull-request`
+    When I run `git-town new-pull-request`
 
 
   Scenario: result
     Then I get the error "Unsupported hosting service"
-    And I get the error "This command requires hosting on GitHub or Bitbucket"
+    And I get the error "This command requires hosting on GitHub, GitLab, or Bitbucket"

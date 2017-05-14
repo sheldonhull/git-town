@@ -1,8 +1,8 @@
 # How to contribute
 
-Git Town is a welcoming community, and we'd love for everyone to bring
-their contributions to make it even better.
-We appreciate contributions of any size.
+Git Town is a welcoming community,
+and we'd love for everyone to bring
+their contributions of any size to make it even better.
 
 * Found a bug or have an idea for a new feature? - [Open an issue](https://github.com/Originate/git-town/issues/new)
 * Fixed a bug or created a new feature that others will enjoy? - [Create a pull request](https://help.github.com/articles/using-pull-requests/)
@@ -12,13 +12,31 @@ This guide will help you get started and outline some things you should know whe
 
 ## Setup
 
-* fork and clone the repository to your machine
+* install [Go](https://golang.org)
+  * on macOS via `brew install go`
+* set up the Go directory structure on your machine
+  * set the environment variable `$GOPATH` to your Go workspace
+    (you can point it to any folder on your hard drive, let's assume `~/go` here)
+  * add `~/go/bin` to your `$PATH`
+  * create the directory `~/go/src/github.com/Originate`
+  * cd into that directory, and run `git clone git@github.com:Originate/git-town.git`
+  * cd into `$GOPATH/src/github.com/Originate/git-town`
+  * run `bin/setup`
+  * now you can run `gt` on the command line
+  * see https://golang.org/doc/install#testing for details on how to test
+* install [Glide](https://github.com/Masterminds/glide) (package manager for Go)
+  * on macOS: `brew install glide`
+
 * install [Ruby 2.2.3](https://www.ruby-lang.org/en/documentation/installation) to run the feature tests
   * prefer install with [rbenv](https://github.com/sstephenson/rbenv)
-* install [ShellCheck](https://github.com/koalaman/shellcheck) for linting the bash scripts
 * run `bundle` to install ruby gems
 * optionally install [Tertestrial](https://github.com/Originate/tertestrial-server)
   for auto-running tests
+
+
+## Building
+
+* run `bin/build` to compile the source code into a runnable binary in $GOPATH/bin
 
 
 ## Testing
@@ -27,6 +45,18 @@ This guide will help you get started and outline some things you should know whe
 * all features need to have comprehensive test coverage
 * source code and test files must pass the linters
 * See [here](./documentation/development/testing.md) for how to run the tests
+
+
+## Developing
+
+* all dependencies are located in the [vendor](vendor) folder,
+  which is checked into Git
+* update dependencies: `glide up`
+* adding a new Go library:
+  * update dependencies in a separate PR
+  * `glide get <package name>`
+  * your pull request for the feature that requires the new library
+    should contain the updated glide files and vendor folder
 
 
 ## Command documentation
@@ -53,7 +83,6 @@ Every Git Town command
 ## Code style
 
 Please follow the existing code style.
-For reference, please take a look at our [Bash cheatsheet](documentation/development/bash_cheatsheet.md).
 
 
 ## Pull Requests
@@ -88,7 +117,10 @@ Implements #123
   * the version in `src/git-town` and the related features
   * the version and date in `man/man1/*.1`
 * Get the feature branch reviewed and merged
-* Draft a new [release](https://github.com/Originate/git-town/releases/new) against `master`
+* Create and push a new Git Tag for the release
+  * `git tag -m release -a v4.0`
+  * `git push --tags`
+* Travis-CI creates a new release on Github and attaches the GT binaries to it
 
 #### Homebrew/homebrew
 * Fork [Homebrew](https://github.com/Homebrew/homebrew)

@@ -2,6 +2,27 @@
 
 ## Unreleased
 
+## 3.1.0 (2017-03-27)
+
+#### New Features
+* `git new-pull-request`, `git repo`:
+  * support `ssh://` urls (thanks to @zhangwei)
+  * add GitLab support (thanks to @dgjnpr)
+
+## 3.0.0 (2017-02-07)
+
+#### BREAKING CHANGES
+* `git hack`: no longer accepts a parent branch (functionality moved to `git append`)
+
+#### New Features
+* `git append`: create a new branch as a child of the current branch
+* `git prepend`: create a new branch as a parent of the current branch
+* `git rename-branch`: implicitly uses the current branch if only one branch name provided
+
+#### Bug Fixes
+* fix incorrectly reported branch loop
+  ([#785](https://github.com/Originate/git-town/issues/785))
+
 ## 2.1.0 (2016-12-26)
 
 #### New Features
