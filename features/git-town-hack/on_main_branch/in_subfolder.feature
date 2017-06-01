@@ -26,7 +26,7 @@ Feature: git town-hack: starting a new feature from a subfolder on the main bran
       |             | git checkout -b new-feature main  |
       | new-feature | git stash pop                     |
       | <none>      | cd <%= git_folder "new_folder" %> |
-    And I am in the project root folder
+    And I am in the project "new_folder" folder
     And I end up on the "new-feature" branch
     And I still have my uncommitted file
     And I have the following commits

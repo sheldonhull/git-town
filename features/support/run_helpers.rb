@@ -78,6 +78,7 @@ def run_shell_command command, inputs = []
   end
 
   result.error = status.exitstatus.nonzero? && !kill
+  result.finalPwd = Dir.pwd
   result
 end
 

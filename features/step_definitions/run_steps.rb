@@ -7,10 +7,10 @@ When(/^(I|my coworker) (?:run|runs|have run) `([^`]+)`$/) do |who, commands|
 end
 
 
-When(/^I run `([^`]+)` in the "(.+?)" folder$/) do |commands, folder_name|
+When(/^I run `([^`]+)` in the "(.+?)" folder$/) do |command, folder_name|
   in_repository :developer do
     Dir.chdir folder_name
-    commands.split(';').each { |command| run command.strip }
+    @result = run command
   end
 end
 

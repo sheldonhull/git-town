@@ -27,7 +27,12 @@ end
 
 
 Then(/^I am in the project root folder$/) do
-  expect(Dir.pwd).to eql git_root_folder
+  expect(@result.finalPwd).to eql git_root_folder
+end
+
+
+Then(/^I am in the project "([^"]*)" folder$/) do |folder|
+  expect(@result.finalPwd).to eql File.join(git_root_folder, folder)
 end
 
 
