@@ -1,2 +1,3 @@
-lint_output.txt
 *.cov
+lint_output.txt
+node_modules/

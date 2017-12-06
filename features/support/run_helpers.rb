@@ -54,7 +54,7 @@ end
 
 
 # rubocop:disable Metrics/MethodLength
-def run command, inputs: [], ignore_errors: false
+def run command, inputs: [], ignore_errors: false, responses: []
   is_git_town_command = git_town_command? command
 
   # Delete coverage file if running another Git Town command.
@@ -69,7 +69,7 @@ def run command, inputs: [], ignore_errors: false
   # run the binary with test coverage enabled
   command = command.sub(/^git-town\b/, 'git-town.test -test.coverprofile=coverage.cov')
   p "running command: #{command}"
-  result = run_shell_command command, inputs
+  result = run_shell_command command, inputs, responses
   result.out = result.out.sub %r{PASS\s+coverage: .* of statements in ./...\n}, ''
 
   raise_error = should_raise_error? is_git_town_command: is_git_town_command,
@@ -84,19 +84,46 @@ end
 # rubocop:enable Metrics/MethodLength
 
 
-def run_shell_command command, inputs = []
+def run_shell_command command, inputs = [], responses = []
   result = OpenStruct.new(command: command, location: Pathname.new(Dir.pwd).basename)
   command = "#{shell_overrides}; #{command} 2>&1"
   kill = inputs.pop if inputs.last == '^C' # command shouldn't error if user aborts it
 
   status = Open4.popen4(command) do |_pid, stdin, stdout, _stderr|
-    inputs.each { |input| stdin.puts input }
-    stdin.close
-    result.out = stdout.read
+    result.out = interact_with_streams inputs, responses, stdin, stdout
   end
 
   result.error = status.exitstatus.nonzero? && !kill
   result
+end
+
+
+def interact_with_streams inputs, responses, stdin, stdout
+  if !responses.empty?
+    respond_to_output responses, stdin, stdout
+  else
+    inputs.each { |input| stdin.puts input }
+    stdin.close
+    stdout.read
+  end
+end
+
+
+# rubocop:disable MethodLength
+def respond_to_output responses, stdin, stdout
+  index = 0
+  output = ''
+  loop do
+    stdin.close if responses.length == index
+    line = stdout.gets
+    break unless line
+    if index < responses.length && line.include?(responses[index]['prompt'])
+      stdin.write responses[index]['answer']
+      index += 1
+    end
+    output += line
+  end
+  output
 end
 
 

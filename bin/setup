@@ -11,3 +11,4 @@ go get github.com/Masterminds/glide \
 gometalinter --install
 bin/build
 bundle install
+npm install
