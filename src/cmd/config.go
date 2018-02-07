@@ -24,11 +24,9 @@ var configCommand = &cobra.Command{
 			printConfig()
 		}
 	},
+	Args: cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return util.FirstError(
-			validateMaxArgsFunc(args, 0),
-			git.ValidateIsRepository,
-		)
+		return git.ValidateIsRepository()
 	},
 }
 
@@ -43,7 +41,7 @@ func printConfig() {
 	}
 
 	util.PrintLabelAndValue("Pull branch strategy", git.GetPullBranchStrategy())
-	util.PrintLabelAndValue("git-hack push flag", git.GetPrintableHackPushFlag())
+	util.PrintLabelAndValue("New Branch Push Flag", git.GetPrintableNewBranchPushFlag())
 }
 
 func resetConfig() {
