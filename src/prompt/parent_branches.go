@@ -3,8 +3,8 @@ package prompt
 import (
 	"fmt"
 
+	"github.com/Originate/git-town/src/cfmt"
 	"github.com/Originate/git-town/src/git"
-	"github.com/fatih/color"
 )
 
 // EnsureKnowsParentBranches asserts that the entire ancestry for all given branches
@@ -12,16 +12,40 @@ import (
 // Missing ancestry information is queried from the user.
 func EnsureKnowsParentBranches(branchNames []string) {
 	for _, branchName := range branchNames {
-		if git.IsMainBranch(branchName) || git.IsPerennialBranch(branchName) || git.HasCompiledAncestorBranches(branchName) {
+		if git.IsMainBranch(branchName) || git.IsPerennialBranch(branchName) || git.HasParentBranch(branchName) {
 			continue
 		}
-		askForBranchAncestry(branchName)
-		ancestors := git.CompileAncestorBranches(branchName)
-		git.SetAncestorBranches(branchName, ancestors)
-
+		AskForBranchAncestry(branchName, git.GetMainBranch())
 		if parentBranchHeaderShown {
 			fmt.Println()
 		}
+	}
+}
+
+// AskForBranchAncestry prompts the user for all unknown ancestors of the given branch
+func AskForBranchAncestry(branchName, defaultBranchName string) {
+	current := branchName
+	choices := git.GetLocalBranchesWithMainBranchFirst()
+	for {
+		parent := git.GetParentBranch(current)
+		if parent == "" {
+			printParentBranchHeader()
+			filteredChoices := filterOutSelfAndDescendants(current, choices)
+			parent = askForBranch(askForBranchOptions{
+				branchNames:       append([]string{perennialBranchOption}, filteredChoices...),
+				prompt:            fmt.Sprintf(parentBranchPromptTemplate, current),
+				defaultBranchName: defaultBranchName,
+			})
+			if parent == perennialBranchOption {
+				git.AddToPerennialBranches(current)
+				break
+			}
+			git.SetParentBranch(current, parent)
+		}
+		if parent == git.GetMainBranch() || git.IsPerennialBranch(parent) {
+			break
+		}
+		current = parent
 	}
 }
 
@@ -36,53 +60,23 @@ The former allows to develop and ship features completely independent of each ot
 The latter allows to build on top of currently unshipped features.
 
 `
-var parentBranchPromptTemplate = "Please specify the parent branch of %s by name or number (default: %s): "
+var parentBranchPromptTemplate = "Please specify the parent branch of '%s':"
+var perennialBranchOption = "<none> (perennial branch)"
 
-func askForBranchAncestry(branchName string) {
-	current := branchName
-	for {
-		parent := git.GetParentBranch(current)
-		if parent == "" {
-			printParentBranchHeader()
-			parent = askForBranch(branchPromptConfig{
-				branchNames: git.GetLocalBranchesWithMainBranchFirst(),
-				prompt:      getParentBranchPrompt(current),
-				validate: func(branchName string) error {
-					return validateParentBranch(current, branchName)
-				},
-			})
-			if parent == "" {
-				parent = git.GetMainBranch()
-			}
-			git.SetParentBranch(current, parent)
+func filterOutSelfAndDescendants(branchName string, choices []string) []string {
+	result := []string{}
+	for _, choice := range choices {
+		if choice == branchName || git.IsAncestorBranch(choice, branchName) {
+			continue
 		}
-		if parent == git.GetMainBranch() || git.IsPerennialBranch(parent) {
-			break
-		}
-		current = parent
+		result = append(result, choice)
 	}
-}
-
-func validateParentBranch(branchName string, parent string) error {
-	if branchName == parent {
-		return fmt.Errorf("'%s' cannot be the parent of itself", parent)
-	}
-	if branchName != "" && git.IsAncestorBranch(parent, branchName) {
-		return fmt.Errorf("Nested branch loop detected: '%s' is an ancestor of '%s'", branchName, parent)
-	}
-	return nil
+	return result
 }
 
 func printParentBranchHeader() {
 	if !parentBranchHeaderShown {
 		parentBranchHeaderShown = true
-		fmt.Printf(parentBranchHeaderTemplate, git.GetMainBranch())
-		printNumberedBranches(git.GetLocalBranchesWithMainBranchFirst())
-		fmt.Println()
+		cfmt.Printf(parentBranchHeaderTemplate, git.GetMainBranch())
 	}
-}
-
-func getParentBranchPrompt(branchName string) string {
-	coloredBranchName := color.New(color.Bold).Add(color.FgCyan).Sprintf(branchName)
-	return fmt.Sprintf(parentBranchPromptTemplate, coloredBranchName, git.GetMainBranch())
 }

@@ -3,10 +3,10 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path"
 
+	"github.com/Originate/exit"
 	"github.com/Originate/git-town/src/util"
 	"github.com/spf13/cobra"
 )
@@ -17,24 +17,18 @@ var installFishAutocompletionCommand = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		installFishAutocompletion()
 	},
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return validateMaxArgs(args, 0)
-	},
+	Args: cobra.NoArgs,
 }
 
 func installFishAutocompletion() {
 	filename := path.Join(os.Getenv("HOME"), ".config", "fish", "completions", "git.fish")
 	err := os.MkdirAll(path.Dir(filename), 0700)
-	if err != nil {
-		log.Fatal(err)
-	}
+	exit.If(err)
 	if util.DoesFileExist(filename) {
 		util.ExitWithErrorMessage("Git autocompletion for Fish shell already exists")
 	}
 	err = ioutil.WriteFile(filename, []byte(buildAutocompletionDefinition()), 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
+	exit.If(err)
 	fmt.Println("Git autocompletion for Fish shell installed")
 }
 
@@ -82,19 +76,17 @@ type autocompleteDefinition struct {
 
 func buildAutocompletionDefinition() string {
 	commands := []autocompleteDefinition{
-		autocompleteDefinition{name: "hack", description: hackCmd.Short},
-		autocompleteDefinition{name: "kill", description: killCommand.Short},
-		autocompleteDefinition{name: "new-pull-request", description: newPullRequestCommand.Short},
-		autocompleteDefinition{name: "prune-branches", description: pruneBranchesCommand.Short},
-		autocompleteDefinition{name: "rename-branch", description: renameBranchCommand.Short},
-		autocompleteDefinition{name: "repo", description: repoCommand.Short},
-		autocompleteDefinition{name: "ship", description: shipCmd.Short},
-		autocompleteDefinition{name: "sync", description: syncCmd.Short},
-	}
-	options := []autocompleteDefinition{
-		autocompleteDefinition{name: "abort", description: abortFlagDescription},
-		autocompleteDefinition{name: "continue", description: continueFlagDescription},
-		autocompleteDefinition{name: "undo", description: undoFlagDescription},
+		{name: "abort", description: abortCmd.Short},
+		{name: "continue", description: configCommand.Short},
+		{name: "hack", description: hackCmd.Short},
+		{name: "kill", description: killCommand.Short},
+		{name: "new-pull-request", description: newPullRequestCommand.Short},
+		{name: "prune-branches", description: pruneBranchesCommand.Short},
+		{name: "rename-branch", description: renameBranchCommand.Short},
+		{name: "repo", description: repoCommand.Short},
+		{name: "ship", description: shipCmd.Short},
+		{name: "sync", description: syncCmd.Short},
+		{name: "undo", description: undoCmd.Short},
 	}
 
 	commandsSpaceSeparated := ""
@@ -105,12 +97,8 @@ func buildAutocompletionDefinition() string {
 	for _, command := range commands {
 		commandAutocompletion += fmt.Sprintf("complete --command git --arguments '%s' --description '%s' --condition '__fish_complete_git_town_no_command' --no-files\n", command.name, command.description)
 	}
-	optionAutocompletion := ""
-	for _, option := range options {
-		optionAutocompletion += fmt.Sprintf("complete --command git --long-option '%s' --description '%s' --no-files\n", option.name, option.description)
-	}
 
-	return fmt.Sprintf(fishAutocompletionTemplate, commandsSpaceSeparated, commandAutocompletion, optionAutocompletion)
+	return fmt.Sprintf(fishAutocompletionTemplate, commandsSpaceSeparated, commandAutocompletion)
 }
 
 func init() {

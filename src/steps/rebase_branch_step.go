@@ -13,21 +13,25 @@ type RebaseBranchStep struct {
 }
 
 // CreateAbortStep returns the abort step for this step.
-func (step RebaseBranchStep) CreateAbortStep() Step {
-	return AbortRebaseBranchStep{}
+func (step *RebaseBranchStep) CreateAbortStep() Step {
+	return &AbortRebaseBranchStep{}
 }
 
 // CreateContinueStep returns the continue step for this step.
-func (step RebaseBranchStep) CreateContinueStep() Step {
-	return ContinueRebaseBranchStep{}
+func (step *RebaseBranchStep) CreateContinueStep() Step {
+	return &ContinueRebaseBranchStep{}
 }
 
 // CreateUndoStepBeforeRun returns the undo step for this step before it is run.
-func (step RebaseBranchStep) CreateUndoStepBeforeRun() Step {
-	return ResetToShaStep{Hard: true, Sha: git.GetCurrentSha()}
+func (step *RebaseBranchStep) CreateUndoStepBeforeRun() Step {
+	return &ResetToShaStep{Hard: true, Sha: git.GetCurrentSha()}
 }
 
 // Run executes this step.
-func (step RebaseBranchStep) Run() error {
-	return script.RunCommand("git", "rebase", step.BranchName)
+func (step *RebaseBranchStep) Run() error {
+	err := script.RunCommand("git", "rebase", step.BranchName)
+	if err != nil {
+		git.ClearCurrentBranchCache()
+	}
+	return err
 }

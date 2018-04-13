@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/Originate/git-town/src/command"
 	"github.com/Originate/git-town/src/util"
 )
 
@@ -20,26 +21,32 @@ func EnsureDoesNotHaveOpenChanges(message string) {
 	util.Ensure(!HasOpenChanges(), "You have uncommitted changes. "+message)
 }
 
+// Root directory is cached in order to minimize the number of git commands run
+var rootDirectory string
+
 // GetRootDirectory returns the path of the rood directory of the current repository,
 // i.e. the directory that contains the ".git" folder.
 func GetRootDirectory() string {
-	return util.GetCommandOutput("git", "rev-parse", "--show-toplevel")
+	if rootDirectory == "" {
+		rootDirectory = command.New("git", "rev-parse", "--show-toplevel").Output()
+	}
+	return rootDirectory
 }
 
 // HasConflicts returns whether the local repository currently has unresolved merge conflicts.
 func HasConflicts() bool {
-	return util.DoesCommandOuputContain([]string{"git", "status"}, "Unmerged paths")
+	return command.New("git", "status").OutputContainsText("Unmerged paths")
 }
 
 // HasOpenChanges returns whether the local repository contains uncommitted changes.
 func HasOpenChanges() bool {
-	return util.GetCommandOutput("git", "status", "--porcelain") != ""
+	return command.New("git", "status", "--porcelain").Output() != ""
 }
 
 // HasShippableChanges returns whether the supplied branch has an changes
 // not currently on the main branchName
 func HasShippableChanges(branchName string) bool {
-	return util.GetCommandOutput("git", "diff", GetMainBranch()+".."+branchName) != ""
+	return command.New("git", "diff", GetMainBranch()+".."+branchName).Output() != ""
 }
 
 // IsMergeInProgress returns whether the local repository is in the middle of
@@ -52,5 +59,5 @@ func IsMergeInProgress() bool {
 // IsRebaseInProgress returns whether the local repository is in the middle of
 // an unfinished rebase process.
 func IsRebaseInProgress() bool {
-	return util.DoesCommandOuputContain([]string{"git", "status"}, "rebase in progress")
+	return command.New("git", "status").OutputContainsText("rebase in progress")
 }

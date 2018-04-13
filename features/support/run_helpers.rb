@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 def array_output_of command, ignore_errors: false
   output_of(command, ignore_errors: ignore_errors).split("\n").map(&:strip)
 end
@@ -16,7 +17,7 @@ COMMAND_REGEX = /
 
 # Returns an array of the commands that were run in the last invocation of "run"
 def commands_of_last_run with_branch: true
-  options = with_branch ? { headers: %w(BRANCH COMMAND), dry: 'BRANCH' } : { headers: %w(COMMAND) }
+  options = with_branch ? { headers: %w[BRANCH COMMAND], dry: 'BRANCH' } : { headers: %w[COMMAND] }
   result = Mortadella::Horizontal.new options
   @last_run_result.out.split("\n").each do |line|
     match = line.match COMMAND_REGEX
@@ -52,8 +53,8 @@ def print_result result
 end
 
 
-def run command, inputs: [], ignore_errors: false
-  result = run_shell_command command, inputs
+def run command, inputs: [], ignore_errors: false, responses: []
+  result = run_shell_command command, inputs, responses
   is_git_town_command = git_town_command? command
   raise_error = should_raise_error? is_git_town_command: is_git_town_command,
                                     result: result,
@@ -66,15 +67,13 @@ def run command, inputs: [], ignore_errors: false
 end
 
 
-def run_shell_command command, inputs = []
+def run_shell_command command, inputs = [], responses = []
   result = OpenStruct.new(command: command, location: Pathname.new(Dir.pwd).basename)
   command = "#{shell_overrides}; #{command} 2>&1"
   kill = inputs.pop if inputs.last == '^C' # command shouldn't error if user aborts it
 
   status = Open4.popen4(command) do |_pid, stdin, stdout, _stderr|
-    inputs.each { |input| stdin.puts input }
-    stdin.close
-    result.out = stdout.read
+    result.out = interact_with_streams inputs, responses, stdin, stdout
   end
 
   result.error = status.exitstatus.nonzero? && !kill
@@ -82,8 +81,37 @@ def run_shell_command command, inputs = []
 end
 
 
+def interact_with_streams inputs, responses, stdin, stdout
+  if !responses.empty?
+    respond_to_output responses, stdin, stdout
+  else
+    inputs.each { |input| stdin.puts input }
+    stdin.close
+    stdout.read
+  end
+end
+
+
+# rubocop:disable MethodLength
+def respond_to_output responses, stdin, stdout
+  index = 0
+  output = ''
+  loop do
+    stdin.close if responses.length == index
+    line = stdout.gets
+    break unless line
+    if index < responses.length && line.include?(responses[index]['prompt'])
+      stdin.write responses[index]['answer']
+      index += 1
+    end
+    output += line
+  end
+  output
+end
+
+
 def shell_overrides
-  "PATH=#{SHELL_OVERRIDE_DIRECTORY}:$PATH;"\
+  "PATH=#{@temporary_shell_overrides_directory}:#{SHELL_OVERRIDE_DIRECTORY}:$PATH;"\
   "HOME=#{REPOSITORY_BASE};"\
   "export WHICH_SOURCE=#{TOOLS_INSTALLED_FILENAME};"\
   'export GIT_TOWN_ENV=test'

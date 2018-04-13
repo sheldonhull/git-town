@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-set -e
-
-go get github.com/Masterminds/glide gopkg.in/alecthomas/gometalinter.v1 github.com/onsi/ginkgo/ginkgo github.com/onsi/gomega
-glide install
-gometalinter.v1 --install
-bin/build
-bundle install

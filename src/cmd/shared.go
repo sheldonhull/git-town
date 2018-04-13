@@ -1,39 +1,30 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
-	"log"
-	"strconv"
+	"os"
+
+	"github.com/Originate/git-town/src/git"
+	"github.com/Originate/git-town/src/prompt"
+	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/steps"
 )
 
 // These variables represent command-line flags
 var (
-	abortFlag,
 	allFlag,
-	continueFlag,
-	skipFlag,
-	undoFlag bool
+	debugFlag,
+	dryRunFlag,
+	globalFlag bool
 )
 
-var abortFlagDescription = "Abort a previous command that resulted in a conflict"
-var continueFlagDescription = "Continue a previous command that resulted in a conflict"
-var undoFlagDescription = "Undo a previous command"
+var dryRunFlagDescription = "Output the commands that would be run without them"
 
-func stringToBool(arg string) bool {
-	value, err := strconv.ParseBool(arg)
-	if err != nil {
-		log.Fatal(err)
+func conditionallyActivateDryRun() error {
+	if dryRunFlag {
+		script.ActivateDryRun()
 	}
-	return value
-}
-
-func validateArgsCount(args []string, count int) error {
-	err := validateMinArgs(args, count)
-	if err != nil {
-		return err
-	}
-	return validateMaxArgs(args, count)
+	return nil
 }
 
 func validateBooleanArgument(arg string) error {
@@ -43,16 +34,37 @@ func validateBooleanArgument(arg string) error {
 	return nil
 }
 
-func validateMinArgs(args []string, min int) error {
-	if len(args) < min {
-		return errors.New("Too few arguments")
-	}
+func validateIsConfigured() error {
+	prompt.EnsureIsConfigured()
+	git.RemoveOutdatedConfiguration()
 	return nil
 }
 
-func validateMaxArgs(args []string, max int) error {
-	if len(args) > max {
-		return errors.New("Too many arguments")
+func ensureIsNotInUnfinishedState() error {
+	runState := steps.LoadPreviousRunState()
+	if runState != nil && runState.IsUnfinished() {
+		response := prompt.AskHowToHandleUnfinishedRunState(
+			runState.Command,
+			runState.UnfinishedDetails.EndBranch,
+			runState.UnfinishedDetails.EndTime,
+			runState.UnfinishedDetails.CanSkip,
+		)
+		if response == prompt.ResponseTypeDiscard {
+			steps.DeletePreviousRunState()
+			return nil
+		}
+		switch response {
+		case prompt.ResponseTypeContinue:
+			git.EnsureDoesNotHaveConflicts()
+			steps.Run(runState)
+		case prompt.ResponseTypeAbort:
+			abortRunState := runState.CreateAbortRunState()
+			steps.Run(&abortRunState)
+		case prompt.ResponseTypeSkip:
+			skipRunState := runState.CreateSkipRunState()
+			steps.Run(&skipRunState)
+		}
+		os.Exit(0)
 	}
 	return nil
 }

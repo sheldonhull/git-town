@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Returns the branch name for the given location
 def branch_name_for_location location, branch
   case location
@@ -104,9 +105,14 @@ def on_branch branch_name
 end
 
 
-def set_parent_branch branch:, parent:, ancestors: nil
+# Returns the names of the existing perennial branches
+def perennial_branches
+  array_output_of('git-town perennial-branches').delete_if { |b| b == '[none]' }
+end
+
+
+def set_parent_branch branch:, parent:
   run "git config git-town-branch.#{branch}.parent #{parent}"
-  run "git config git-town-branch.#{branch}.ancestors #{ancestors}" if ancestors
 end
 
 

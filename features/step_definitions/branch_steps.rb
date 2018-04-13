@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 Given(/^(I|my coworker) (?:am|is) on the "(.+?)" branch$/) do |who, branch_name|
   user = (who == 'I') ? :developer : :coworker
   in_repository user do
@@ -7,49 +8,35 @@ Given(/^(I|my coworker) (?:am|is) on the "(.+?)" branch$/) do |who, branch_name|
 end
 
 
-Given(/^I have a( local)?( feature)?( perennial)? branch named "([^"]+)"( on another machine)?$/) do |local, feature, perennial, branch_name, remote|
+Given(/^my repository has a( local)?( feature)?( perennial)? branch named "([^"]+)"( on another machine)?$/) do |local, feature, perennial, branch_name, remote|
   user = 'developer'
   user += '_secondary' if remote
   in_repository user do
     create_branch branch_name, remote: !local
-    set_parent_branch branch: branch_name, parent: 'main', ancestors: 'main' if feature
+    set_parent_branch branch: branch_name, parent: 'main' if feature
     add_perennial_branch branch_name if perennial
   end
 end
 
 
-Given(/^I have a feature branch named "([^"]+)" with no parent$/) do |branch_name|
+Given(/^my repository has a feature branch named "([^"]+)" with no parent$/) do |branch_name|
   create_branch branch_name
 end
 
 
-Given(/^I have( local)?( feature)?( perennial)? branches named "(.+?)"$/) do |local, feature, perennial, branch_names|
+Given(/^my repository has the( local)?( feature)?( perennial)? branches "(.+?)"$/) do |local, feature, perennial, branch_names|
   Kappamaki.from_sentence(branch_names).each do |branch_name|
     create_branch branch_name, remote: !local
-    set_parent_branch branch: branch_name, parent: 'main', ancestors: 'main' if feature
+    set_parent_branch branch: branch_name, parent: 'main' if feature
     add_perennial_branch branch_name if perennial
   end
 end
 
 
-Given(/^I have a feature branch named "([^"]+)" as a child of "([^"]+)"$/) do |branch_name, parent_name|
+Given(/^(?:my repository|it) has a(?: feature| hotfix)? branch named "([^"]+)" as a child of "([^"]+)"$/) do |branch_name, parent_name|
   create_branch branch_name, remote: true, start_point: parent_name
   set_parent_branch branch: branch_name, parent: parent_name
   store_branch_hierarchy_metadata
-end
-
-
-Given(/^I have a( local)? feature branch named "(.+?)" (behind|ahead of) main$/) do |local, branch_name, relation|
-  create_branch branch_name, remote: !local
-  if relation
-    commit_to_branch = relation == 'behind' ? 'main' : branch_name
-    create_commits branch: commit_to_branch
-  end
-end
-
-
-Given(/^I remove the "([^"]+)" branch from my machine$/) do |branch_name|
-  delete_local_branch branch_name
 end
 
 
@@ -61,6 +48,11 @@ Given(/^my coworker has a feature branch named "(.+?)"(?: (behind|ahead of) main
       create_commits branch: commit_to_branch
     end
   end
+end
+
+
+Given(/^my repository knows about the remote branch$/) do
+  run 'git fetch'
 end
 
 
@@ -104,18 +96,18 @@ Then(/^there is no "(.+?)" branch$/) do |branch_name|
 end
 
 
-Then(/^the branch "(.+?)" has not been pushed to the repository$/) do |branch_name|
-  expect(existing_remote_branches).to_not include(branch_name)
-end
-
-
 Then(/^all branches are now synchronized$/) do
   expect(number_of_branches_out_of_sync).to eql 0
 end
 
 
 Then(/^there are no more feature branches$/) do
-  expect(existing_branches).to match_array ['main', 'origin/main']
+  expected_branches = ['main', 'origin/main']
+  perennial_branches.each do |perennial_branch|
+    expected_branches << perennial_branch
+    expected_branches << "origin/#{perennial_branch}"
+  end
+  expect(existing_branches).to match_array expected_branches
 end
 
 

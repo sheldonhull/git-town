@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 def add_perennial_branch branch
   old_value = perennial_branch_configuration
   new_value = [old_value, branch].reject(&:blank?).join(' ')
@@ -18,6 +19,11 @@ end
 
 def get_configuration configuration
   output_of "git config --get git-town.#{configuration} || true"
+end
+
+
+def get_global_configuration configuration
+  output_of "git config --global --get git-town.#{configuration} || true"
 end
 
 
@@ -49,4 +55,9 @@ end
 
 def set_configuration configuration, value
   run "git config git-town.#{configuration} '#{value}'"
+end
+
+
+def set_global_configuration configuration, value
+  run "git config --global git-town.#{configuration} '#{value}'"
 end

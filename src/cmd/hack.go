@@ -1,66 +1,69 @@
 package cmd
 
 import (
-	"errors"
-
 	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/prompt"
 	"github.com/Originate/git-town/src/script"
 	"github.com/Originate/git-town/src/steps"
+	"github.com/Originate/git-town/src/util"
 
 	"github.com/spf13/cobra"
 )
 
+type hackConfig struct {
+	TargetBranch string
+}
+
 var hackCmd = &cobra.Command{
 	Use:   "hack <branch>",
 	Short: "Creates a new feature branch off the main development branch",
+	Long: `Creates a new feature branch off the main development branch
+
+Syncs the main branch and forks a new feature branch with the given name off it.
+
+If (and only if) [new-branch-push-flag](./new-branch-push-flag.md) is true,
+pushes the new feature branch to the remote repository.
+
+Finally, brings over all uncommitted changes to the new feature branch.
+
+Additionally, when there is a remote upstream,
+the main branch is synced with its upstream counterpart.
+This can be disabled by toggling the "new-branch-push-flag" configuration:
+$ git town new-branch-push-flag false`,
 	Run: func(cmd *cobra.Command, args []string) {
-		git.EnsureIsRepository()
-		prompt.EnsureIsConfigured()
-		steps.Run(steps.RunOptions{
-			CanSkip:              func() bool { return false },
-			Command:              "hack",
-			IsAbort:              abortFlag,
-			IsContinue:           continueFlag,
-			IsSkip:               false,
-			IsUndo:               false,
-			SkipMessageGenerator: func() string { return "" },
-			StepListGenerator: func() steps.StepList {
-				targetBranchName := checkHackPreconditions(args)
-				return getHackStepList(targetBranchName)
-			},
-		})
+		config := getHackConfig(args)
+		stepList := getHackStepList(config)
+		runState := steps.NewRunState("hack", stepList)
+		steps.Run(runState)
 	},
+	Args: cobra.ExactArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 && !abortFlag && !continueFlag {
-			return errors.New("no branch name provided")
-		}
-		return validateMaxArgs(args, 1)
+		return util.FirstError(
+			git.ValidateIsRepository,
+			validateIsConfigured,
+		)
 	},
 }
 
-func checkHackPreconditions(args []string) string {
-	targetBranchName := args[0]
-	if git.HasRemote("origin") {
+func getHackConfig(args []string) (result hackConfig) {
+	result.TargetBranch = args[0]
+	if git.HasRemote("origin") && !git.IsOffline() {
 		script.Fetch()
 	}
-	git.EnsureDoesNotHaveBranch(targetBranchName)
-	return targetBranchName
+	git.EnsureDoesNotHaveBranch(result.TargetBranch)
+	return
 }
 
-func getHackStepList(targetBranchName string) (result steps.StepList) {
+func getHackStepList(config hackConfig) (result steps.StepList) {
 	mainBranchName := git.GetMainBranch()
-	result.AppendList(steps.GetSyncBranchSteps(mainBranchName))
-	result.Append(steps.CreateAndCheckoutBranchStep{BranchName: targetBranchName, ParentBranchName: mainBranchName})
-	if git.HasRemote("origin") && git.ShouldHackPush() {
-		result.Append(steps.CreateTrackingBranchStep{BranchName: targetBranchName})
+	result.AppendList(steps.GetSyncBranchSteps(mainBranchName, true))
+	result.Append(&steps.CreateAndCheckoutBranchStep{BranchName: config.TargetBranch, ParentBranchName: mainBranchName})
+	if git.HasRemote("origin") && git.ShouldNewBranchPush() && !git.IsOffline() {
+		result.Append(&steps.CreateTrackingBranchStep{BranchName: config.TargetBranch})
 	}
 	result.Wrap(steps.WrapOptions{RunInGitRoot: true, StashOpenChanges: true})
 	return
 }
 
 func init() {
-	hackCmd.Flags().BoolVar(&abortFlag, "abort", false, abortFlagDescription)
-	hackCmd.Flags().BoolVar(&continueFlag, "continue", false, continueFlagDescription)
 	RootCmd.AddCommand(hackCmd)
 }

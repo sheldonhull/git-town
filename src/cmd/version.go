@@ -10,8 +10,9 @@ import (
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Displays the version",
+	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Git Town 4.0.0")
+		fmt.Println("Git Town 7.1.1")
 	},
 }
 

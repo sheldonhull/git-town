@@ -1,30 +1,32 @@
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/Originate/git-town/src/cfmt"
 	"github.com/Originate/git-town/src/git"
 	"github.com/spf13/cobra"
 )
 
 var mainBranchCommand = &cobra.Command{
 	Use:   "main-branch [<branch>]",
-	Short: "Displays or sets your main branch",
+	Short: "Displays or sets your main development branch",
+	Long: `Displays or sets your main development branch
+
+The main branch is the Git branch from which new feature branches are cut.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		git.EnsureIsRepository()
 		if len(args) == 0 {
 			printMainBranch()
 		} else {
 			setMainBranch(args[0])
 		}
 	},
+	Args: cobra.MaximumNArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return validateMaxArgs(args, 1)
+		return git.ValidateIsRepository()
 	},
 }
 
 func printMainBranch() {
-	fmt.Println(git.GetPrintableMainBranch())
+	cfmt.Println(git.GetPrintableMainBranch())
 }
 
 func setMainBranch(branchName string) {

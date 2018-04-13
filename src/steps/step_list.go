@@ -1,9 +1,10 @@
 package steps
 
 import (
-	"log"
+	"encoding/json"
 	"os"
 
+	"github.com/Originate/exit"
 	"github.com/Originate/git-town/src/git"
 )
 
@@ -65,24 +66,47 @@ type WrapOptions struct {
 // Wrap wraps the list with steps that
 // change to the Git root directory or stash away open changes.
 func (stepList *StepList) Wrap(options WrapOptions) {
-	stepList.Append(PreserveCheckoutHistoryStep{
+	stepList.Append(&PreserveCheckoutHistoryStep{
 		InitialBranch:                     git.GetCurrentBranchName(),
 		InitialPreviouslyCheckedOutBranch: git.GetPreviouslyCheckedOutBranch(),
 	})
 
 	if options.StashOpenChanges && git.HasOpenChanges() {
-		stepList.Prepend(StashOpenChangesStep{})
-		stepList.Append(RestoreOpenChangesStep{})
+		stepList.Prepend(&StashOpenChangesStep{})
+		stepList.Append(&RestoreOpenChangesStep{})
 	}
 
 	initialDirectory, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
+	exit.If(err)
 	gitRootDirectory := git.GetRootDirectory()
 
 	if options.RunInGitRoot && initialDirectory != gitRootDirectory {
-		stepList.Prepend(ChangeDirectoryStep{Directory: gitRootDirectory})
-		stepList.Append(ChangeDirectoryStep{Directory: initialDirectory})
+		stepList.Prepend(&ChangeDirectoryStep{Directory: gitRootDirectory})
+		stepList.Append(&ChangeDirectoryStep{Directory: initialDirectory})
 	}
+}
+
+// MarshalJSON marshals the step list to JSON
+func (stepList *StepList) MarshalJSON() (b []byte, e error) {
+	jsonSteps := make([]*JSONStep, len(stepList.List))
+	for i, step := range stepList.List {
+		jsonSteps[i] = &JSONStep{Step: step}
+	}
+	return json.Marshal(jsonSteps)
+}
+
+// UnmarshalJSON unmarshals the step list from JSON
+func (stepList *StepList) UnmarshalJSON(b []byte) error {
+	var jsonSteps []JSONStep
+	err := json.Unmarshal(b, &jsonSteps)
+	if err != nil {
+		return err
+	}
+	if len(jsonSteps) > 0 {
+		stepList.List = make([]Step, len(jsonSteps))
+		for i, jsonStep := range jsonSteps {
+			stepList.List[i] = jsonStep.Step
+		}
+	}
+	return nil
 }

@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/Originate/git-town/src/git"
 	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/util"
 	"github.com/spf13/cobra"
 )
 
@@ -22,8 +23,14 @@ var commandsToAlias = []string{
 var aliasCommand = &cobra.Command{
 	Use:   "alias (true | false)",
 	Short: "Adds or removes default global aliases",
+	Long: `Adds or removes default global aliases
+
+Global aliases allow Git Town commands to be used like native Git commands.
+When aliases are set, you can run "git hack" instead of having to run "git town hack".
+
+Note that this can conflict with other tools that also define additional Git commands.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		toggle := stringToBool(args[0])
+		toggle := util.StringToBool(args[0])
 		for _, command := range commandsToAlias {
 			if toggle {
 				addAlias(command)
@@ -32,12 +39,11 @@ var aliasCommand = &cobra.Command{
 			}
 		}
 	},
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		err := validateArgsCount(args, 1)
-		if err != nil {
-			return err
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 1 {
+			return validateBooleanArgument(args[0])
 		}
-		return validateBooleanArgument(args[0])
+		return cobra.ExactArgs(1)(cmd, args)
 	},
 }
 

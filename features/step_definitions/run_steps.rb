@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 When(/^(I|my coworker) (?:run|runs|have run) `([^`]+)`$/) do |who, commands|
   user = (who == 'I') ? :developer : :coworker
   in_repository user do
@@ -15,39 +16,34 @@ When(/^I run `([^`]+)` in the "(.+?)" folder$/) do |commands, folder_name|
 end
 
 
-When(/^I run `(.+?)` and enter "(.*?)"$/) do |command, input|
-  inputs = Kappamaki.from_sentence(input)
-  @result = run command, inputs: inputs
-end
-
-
-When(/^I run `(.+?)` and enter:$/) do |command, table|
-  @result = run command, inputs: table.raw.map { |row| row[0] }
-end
-
-
 When(/^I run `(.+?)` and enter an empty commit message$/) do |command|
   # In vim "dG" removes all lines and "ZZ" saves and exits
-  step "I run `#{command}` and enter \"dGZZ\""
+  @result = run command, inputs: ['dGZZ']
 end
 
 
 When(/^I run `(.+?)` and don't change the default commit message$/) do |command|
   # In vim "ZZ" saves and exits
-  step "I run `#{command}` and enter \"ZZ\""
+  @result = run command, inputs: ['ZZ']
 end
 
 
-When(/^I run `(.+?)` and press ENTER( twice)?$/) do |command, twice|
-  inputs = ["\n"]
-  inputs += inputs if twice
-  @result = run command, inputs: inputs
+When(/^I run `(.+?)` and answer the prompts:$/) do |command, table|
+  table.map_headers!(&:downcase)
+  table.map_column!('answer') do |text|
+    text
+      .gsub('[ENTER]', "\n")
+      .gsub('[DOWN]', "\e[B")
+      .gsub('[UP]', "\e[A")
+      .gsub('[SPACE]', ' ')
+  end
+  @result = run command, responses: table.hashes
 end
 
 
 
 
-Then(/^I get the error$/) do |error_message|
+Then(/^it prints the error:$/) do |error_message|
   @error_expected = true
   expect(@last_run_result).to_not be_nil, 'Error message expected, but no commands were run'
   expect(@last_run_result.error).to be_truthy
@@ -65,8 +61,8 @@ Then(/^I get the error$/) do |error_message|
 end
 
 
-Then(/^I get the error "(.+?)"$/) do |error_message|
-  step 'I get the error', error_message
+Then(/^it prints the error "(.+?)"$/) do |error_message|
+  step 'it prints the error:', error_message
 end
 
 
@@ -86,26 +82,21 @@ Then(/^it runs the commands$/) do |expected_commands|
 end
 
 
-Then(/^I see no output$/) do
+Then(/^it prints no output$/) do
   expect(@last_run_result.out).to eql ''
 end
 
 
-Then(/^I don't see "(.*)"$/) do |string|
+Then(/^it does not print "(.*)"$/) do |string|
   expect(unformatted_last_run_output).not_to include(string)
 end
 
 
-Then(/^I see$/) do |string|
+Then(/^it prints$/) do |string|
   expect(unformatted_last_run_output).to include(string)
 end
 
 
-Then(/^I see "(.*)"$/) do |string|
-  step 'I see', string
-end
-
-
-Then(/^I see the "(.+?)" man page$/) do |manpage|
-  expect(@last_run_result.out).to eql "man called with: #{manpage}\n"
+Then(/^it prints "(.*)"$/) do |string|
+  step 'it prints', string
 end

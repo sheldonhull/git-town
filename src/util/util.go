@@ -3,26 +3,13 @@ package util
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
-	"os/exec"
 	"strings"
 
+	"github.com/Originate/exit"
+	"github.com/Originate/git-town/src/cfmt"
 	"github.com/fatih/color"
 )
-
-// DoesCommandOuputContain runs the given command
-// and returns whether its output contains the given string.
-func DoesCommandOuputContain(cmd []string, value string) bool {
-	return strings.Contains(GetCommandOutput(cmd...), value)
-}
-
-// DoesCommandOuputContainLine runs the given command
-// and returns whether its output contains teh given string as an entire line.
-func DoesCommandOuputContainLine(cmd []string, value string) bool {
-	list := strings.Split(GetCommandOutput(cmd...), "\n")
-	return DoesStringArrayContain(list, value)
-}
 
 // DoesStringArrayContain returns whether the given string slice
 // contains the given string.
@@ -41,51 +28,12 @@ func ExitWithErrorMessage(messages ...string) {
 	os.Exit(1)
 }
 
-// GetCommandOutput runs the given command and returns its output.
-func GetCommandOutput(cmd ...string) string {
-	subProcess := exec.Command(cmd[0], cmd[1:]...)
-	output, err := subProcess.CombinedOutput()
-	if err != nil {
-		log.Fatal("Command: ", strings.Join(cmd, " "), "\nOutput: "+string(output), "\nError: ", err)
-	}
-	return strings.TrimSpace(string(output))
-}
-
-// GetFullCommandOutput runs the given command and returns its output and error
-func GetFullCommandOutput(cmd ...string) (string, error) {
-	subProcess := exec.Command(cmd[0], cmd[1:]...)
-	output, err := subProcess.CombinedOutput()
-	return strings.TrimSpace(string(output)), err
-}
-
-var openBrowserCommands = []string{"xdg-open", "open"}
-var missingOpenBrowserCommandMessages = []string{
-	"Opening a browser requires 'open' on Mac or 'xdg-open' on Linux.",
-	"If you would like another command to be supported,",
-	"please open an issue at https://github.com/Originate/git-town/issues",
-}
-
-// GetOpenBrowserCommand returns the command to run on the console
-// to open the default browser.
-func GetOpenBrowserCommand() string {
-	for _, command := range openBrowserCommands {
-		output, err := GetFullCommandOutput("which", command)
-		if err == nil && output != "" {
-			return command
-		}
-	}
-	ExitWithErrorMessage(missingOpenBrowserCommandMessages...)
-	return ""
-}
-
 var inputReader = bufio.NewReader(os.Stdin)
 
 // GetUserInput reads input from the user and returns it.
 func GetUserInput() string {
 	text, err := inputReader.ReadString('\n')
-	if err != nil {
-		log.Fatal("Error getting user input:", err)
-	}
+	exit.IfWrap(err, "Error getting user input")
 	return strings.TrimSpace(text)
 }
 
@@ -111,9 +59,11 @@ func PrintError(messages ...string) {
 	errHeaderFmt := color.New(color.Bold).Add(color.FgRed)
 	errMessageFmt := color.New(color.FgRed)
 	fmt.Println()
-	errHeaderFmt.Println("  Error")
+	_, err := errHeaderFmt.Println("  Error")
+	exit.If(err)
 	for _, message := range messages {
-		errMessageFmt.Println("  " + message)
+		_, err = errMessageFmt.Println("  " + message)
+		exit.If(err)
 	}
 	fmt.Println()
 }
@@ -123,8 +73,9 @@ func PrintError(messages ...string) {
 // followed by an empty line
 func PrintLabelAndValue(label, value string) {
 	labelFmt := color.New(color.Bold).Add(color.Underline)
-	labelFmt.Println(label + ":")
-	fmt.Println(Indent(value, 1))
+	_, err := labelFmt.Println(label + ":")
+	exit.If(err)
+	cfmt.Println(Indent(value, 1))
 	fmt.Println()
 }
 

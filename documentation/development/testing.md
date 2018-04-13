@@ -4,32 +4,27 @@
 
 ```bash
 # running the different test types
-rake           # runs all tests
-bin/lint       # runs the linters
-bin/lint_go    # runs the Go linters
-rake test      # runs the feature tests
+make spec       # runs all tests
+make lint       # runs the linters
+make lint-go    # runs the Go linters
+make cuke       # runs the feature tests
 
 # running individual scenarios/features
-cucumber <filename>[:<lineno>]
-cucumber -n '<scenario/feature name>'
+make cuke dir=<path>
 
 # running tests in parallel
-bin/cuke [cucumber parameters]
+make cuke [cucumber parameters]
 # set the environment variable PARALLEL_TEST_PROCESSORS to override the
 # auto-detected number of processors
 
 # auto-fixing formatting issues
-rake format
+make fix
 ```
-
-The `rake [parameters]` commands above can also be run as `bundle exec rake [parameters]`
-if you encounter Ruby versioning issues.
 
 Git Town's [CI server](https://circleci.com/gh/Originate/git-town)
 automatically tests all commits and pull requests,
 and notifies you via email and through status badges in pull requests
 about problems.
-
 
 ## Debugging
 
@@ -43,18 +38,17 @@ $ DEBUG_COMMANDS=true cucumber <filename>[:<lineno>]
 Alternatively, you can also add a `@debug-commands` flag to the respective
 Cucumber spec:
 
-  ```cucumber
-  @debug-commands
-  Scenario: foo bar baz
-    Given ...
-  ```
+```cucumber
+@debug-commands
+Scenario: foo bar baz
+  Given ...
+```
 
 For even more detailed output, you can use the `DEBUG` variable or tag
 in a similar fashion.
 If set, Git Town prints every shell command executed during the tests
 (includes setup, inspection of the Git status, and the Git commands),
 and the respective console output.
-
 
 ## Mocking
 
@@ -67,7 +61,6 @@ by setting the Git configuration value
 `git-town.testing.remote-url` to the respective value.
 To keep this behavior clean and secure,
 this also requires an environment variable `GIT_TOWN_ENV` to be set to `test`.
-
 
 ## Auto-running tests
 

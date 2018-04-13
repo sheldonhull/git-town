@@ -1,7 +1,8 @@
 # frozen_string_literal: true
+
 source 'http://rubygems.org'
 
-ruby '2.3.3'
+ruby '2.4.1'
 
 group :development do
   gem 'activesupport'
@@ -11,7 +12,6 @@ group :development do
   gem 'mortadella'
   gem 'open4'
   gem 'parallel_tests'
-  gem 'rake'
   gem 'rspec'
   gem 'rubocop'
 end
