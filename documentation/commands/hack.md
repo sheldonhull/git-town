@@ -33,7 +33,7 @@ Finally, brings over all uncommitted changes to the new feature branch.
 
 #### Sample Output
 
-From another feature branch with uncommitted changes you think should go in their own branch.
+From another feature branch with uncommitted changes.
 
 ```
 $ git-town hack new-feature
@@ -68,3 +68,5 @@ Changes to be committed:
 
 Dropped refs/stash@{0} (6df22a26ac8dacfc2d55886f0deb495f024ec2f3)
 ```
+
+Output from this [feature](/features/git-town-hack/on_feature_branch/with_remote_origin.feature).
