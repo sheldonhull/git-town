@@ -30,3 +30,41 @@ Finally, brings over all uncommitted changes to the new feature branch.
 --continue
     Continue the operation after resolving conflicts.
 ```
+
+#### Sample Output
+
+From another feature branch with uncommitted changes you think should go in their own branch.
+
+```
+$ git-town hack new-feature
+
+[existing-feature] git fetch --prune
+From <...>
+   e2329dd..7a79f72  main       -> origin/main
+
+[existing-feature] git add -A
+
+[existing-feature] git stash
+Saved working directory and index state WIP on existing-feature: 6f7ffde existing feature commit
+
+[existing-feature] git checkout main
+Switched to branch 'main'
+Your branch is behind 'origin/main' by 1 commit, and can be fast-forwarded.
+  (use "git pull" to update your local branch)
+
+[main] git rebase origin/main
+First, rewinding head to replay your work on top of it...
+Fast-forwarded main to origin/main.
+
+[main] git checkout -b new-feature main
+Switched to a new branch 'new-feature'
+
+[new-feature] git stash pop
+On branch new-feature
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   uncommitted_file
+
+Dropped refs/stash@{0} (6df22a26ac8dacfc2d55886f0deb495f024ec2f3)
+```
