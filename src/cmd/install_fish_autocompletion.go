@@ -13,7 +13,7 @@ import (
 
 var installFishAutocompletionCommand = &cobra.Command{
 	Use:   "install-fish-autocompletion",
-	Short: "Installs the autocompletion definition for Fish shell (http://fishshell.com)",
+	Short: "Installs the autocompletion definition for Fish shell",
 	Run: func(cmd *cobra.Command, args []string) {
 		installFishAutocompletion()
 	},
@@ -63,10 +63,6 @@ end
 # This is only enabled for commands that take branch names.
 # This is achieved through __fish_complete_git_town_command_takes_branch
 complete --command git --arguments "(git branch | tr -d '* ')" --no-files
-
-
-# Define autocompletion for command-line switches
-%s
 `
 
 type autocompleteDefinition struct {
@@ -76,6 +72,8 @@ type autocompleteDefinition struct {
 
 func buildAutocompletionDefinition() string {
 	commands := []autocompleteDefinition{
+		{name: "abort", description: abortCmd.Short},
+		{name: "continue", description: configCommand.Short},
 		{name: "hack", description: hackCmd.Short},
 		{name: "kill", description: killCommand.Short},
 		{name: "new-pull-request", description: newPullRequestCommand.Short},
@@ -84,11 +82,7 @@ func buildAutocompletionDefinition() string {
 		{name: "repo", description: repoCommand.Short},
 		{name: "ship", description: shipCmd.Short},
 		{name: "sync", description: syncCmd.Short},
-	}
-	options := []autocompleteDefinition{
-		{name: "abort", description: abortFlagDescription},
-		{name: "continue", description: continueFlagDescription},
-		{name: "undo", description: undoFlagDescription},
+		{name: "undo", description: undoCmd.Short},
 	}
 
 	commandsSpaceSeparated := ""
@@ -99,12 +93,8 @@ func buildAutocompletionDefinition() string {
 	for _, command := range commands {
 		commandAutocompletion += fmt.Sprintf("complete --command git --arguments '%s' --description '%s' --condition '__fish_complete_git_town_no_command' --no-files\n", command.name, command.description)
 	}
-	optionAutocompletion := ""
-	for _, option := range options {
-		optionAutocompletion += fmt.Sprintf("complete --command git --long-option '%s' --description '%s' --no-files\n", option.name, option.description)
-	}
 
-	return fmt.Sprintf(fishAutocompletionTemplate, commandsSpaceSeparated, commandAutocompletion, optionAutocompletion)
+	return fmt.Sprintf(fishAutocompletionTemplate, commandsSpaceSeparated, commandAutocompletion)
 }
 
 func init() {

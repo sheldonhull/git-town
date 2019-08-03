@@ -20,7 +20,7 @@ Feature: git town-kill: killing the current feature branch with a deleted tracki
   Scenario: result
     Then it runs the commands
       | BRANCH          | COMMAND                                |
-      | current-feature | git fetch --prune                      |
+      | current-feature | git fetch --prune --tags               |
       |                 | git add -A                             |
       |                 | git commit -m "WIP on current-feature" |
       |                 | git checkout main                      |
@@ -37,7 +37,7 @@ Feature: git town-kill: killing the current feature branch with a deleted tracki
 
 
   Scenario: undoing the kill
-    When I run `git-town kill --undo`
+    When I run `git-town undo`
     Then it runs the commands
       | BRANCH          | COMMAND                                                        |
       | main            | git branch current-feature <%= sha 'WIP on current-feature' %> |

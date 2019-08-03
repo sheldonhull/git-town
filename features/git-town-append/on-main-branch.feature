@@ -17,7 +17,7 @@ Feature: Appending a branch to a feature branch
   Scenario: inserting a branch into the branch ancestry
     Then it runs the commands
       | BRANCH    | COMMAND                   |
-      | main      | git fetch --prune         |
+      | main      | git fetch --prune --tags  |
       |           | git add -A                |
       |           | git stash                 |
       |           | git rebase origin/main    |
@@ -36,7 +36,7 @@ Feature: Appending a branch to a feature branch
 
 
   Scenario: Undo
-    When I run `git-town append --undo`
+    When I run `git-town undo`
     Then it runs the commands
         | BRANCH    | COMMAND                 |
         | new-child | git add -A              |

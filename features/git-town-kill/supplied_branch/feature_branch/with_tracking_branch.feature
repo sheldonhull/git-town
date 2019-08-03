@@ -20,7 +20,7 @@ Feature: git town-kill: killing the given feature branch
   Scenario: result
     Then it runs the commands
       | BRANCH       | COMMAND                       |
-      | good-feature | git fetch --prune             |
+      | good-feature | git fetch --prune --tags      |
       |              | git add -A                    |
       |              | git stash                     |
       |              | git push origin :dead-feature |
@@ -39,7 +39,7 @@ Feature: git town-kill: killing the given feature branch
 
 
   Scenario: undoing the kill
-    When I run `git-town kill --undo`
+    When I run `git-town undo`
     Then it runs the commands
       | BRANCH       | COMMAND                                              |
       | good-feature | git add -A                                           |

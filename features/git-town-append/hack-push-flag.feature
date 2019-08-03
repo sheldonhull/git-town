@@ -16,7 +16,7 @@ Feature: push branch to remote upon creation
   Scenario: inserting a branch into the branch ancestry
     Then it runs the commands
       | BRANCH    | COMMAND                      |
-      | main      | git fetch --prune            |
+      | main      | git fetch --prune --tags     |
       |           | git add -A                   |
       |           | git stash                    |
       |           | git rebase origin/main       |
@@ -36,7 +36,7 @@ Feature: push branch to remote upon creation
 
 
   Scenario: Undo
-    When I run `git-town append --undo`
+    When I run `git-town undo`
     Then it runs the commands
         | BRANCH    | COMMAND                    |
         | new-child | git add -A                 |

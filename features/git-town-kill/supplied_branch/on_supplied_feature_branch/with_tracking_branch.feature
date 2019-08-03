@@ -19,7 +19,7 @@ Feature: git town-kill: killing the given feature branch when on it
   Scenario: result
     Then it runs the commands
       | BRANCH          | COMMAND                                |
-      | current-feature | git fetch --prune                      |
+      | current-feature | git fetch --prune --tags               |
       |                 | git push origin :current-feature       |
       |                 | git add -A                             |
       |                 | git commit -m "WIP on current-feature" |
@@ -37,7 +37,7 @@ Feature: git town-kill: killing the given feature branch when on it
 
 
   Scenario: undoing the kill
-    When I run `git-town kill --undo`
+    When I run `git-town undo`
     Then it runs the commands
       | BRANCH          | COMMAND                                                        |
       | main            | git branch current-feature <%= sha 'WIP on current-feature' %> |
