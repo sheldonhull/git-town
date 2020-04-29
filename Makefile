@@ -51,6 +51,10 @@ fix-rb:  # auto-fixes all Ruby lint issues
 help:  # prints all make targets
 	@cat Makefile | grep '^[^ ]*:' | grep -v '.PHONY' | grep -v help | sed 's/:.*#/#/' | column -s "#" -t
 
+install-godog:  # installs the godog binary from the sources in the vendor folder
+	cd vendor/github.com/cucumber/godog
+	go install ./cmd/godog
+
 lint: lint-cucumber lint-go lint-md lint-rb  # lints all the source code
 
 lint-cucumber:  # lints the Cucumber files
@@ -71,7 +75,6 @@ setup: setup-go  # the setup steps necessary on developer machines
 	yarn install
 
 setup-go:
-	GO111MODULE=on go get github.com/cucumber/godog/cmd/godog@v0.9.0
 	curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(shell go env GOPATH)/bin v1.23.8
 
 stats:  # shows code statistics
@@ -94,3 +97,9 @@ update:  # updates all dependencies
 	go get -u ./...
 	go mod tidy
 	go mod vendor
+
+vendor-godog:  # vendors godog in a way that allows to compile the binary out of the vendored folder
+	go get github.com/nomad-software/vend
+	vend
+	git add vendor/github.com/cucumber/godog/cmd
+	git checkout .
