@@ -102,4 +102,4 @@ vendor-godog:  # vendors godog in a way that allows to compile the binary out of
 	go get github.com/nomad-software/vend
 	vend
 	git add vendor/github.com/cucumber/godog/cmd
-	git checkout .
+	git clean -fd
