@@ -11,7 +11,6 @@ require (
 	github.com/golang/protobuf v1.4.0 // indirect
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/go-querystring v1.0.0 // indirect
-	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
 	github.com/mattn/go-colorable v0.1.6 // indirect
 	github.com/sergi/go-diff v1.0.0
