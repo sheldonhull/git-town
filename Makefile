@@ -72,7 +72,9 @@ lint-rb:  # lints the Ruby files
 
 setup: setup-go  # the setup steps necessary on developer machines
 	bundle install
-	yarn install
+	cd tools/harp && yarn install
+	cd tools/text-runner && yarn install
+
 
 setup-go:
 	curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(shell go env GOPATH)/bin v1.23.8
