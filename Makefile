@@ -13,7 +13,12 @@ cross-compile:  # builds the binary for all platforms
 			-output "dist/{{.Dir}}-${TRAVIS_TAG}-{{.OS}}-{{.Arch}}"
 
 cuke: build   # runs the new Godog-based feature tests
-	go test
+	@env GOGC=off go test . -v -count=1
+
+cuke-prof: build  # creates a flamegraph
+	env GOGC=off go test . -v -cpuprofile=godog.out
+	@rm git-town.test
+	@echo Please open https://www.speedscope.app and load the file godog.out
 
 deploy:  # deploys the website
 	git checkout gh-pages
@@ -71,10 +76,10 @@ test-go: build unit cuke lint-go  # runs all tests for Golang
 test-md: lint-md   # runs all Markdown tests
 
 u:  # runs only the unit tests for changed code
-	go test -timeout 5s ./src/... ./test/...
+	env GOGC=off go test -timeout 5s ./src/... ./test/...
 
 unit:  # runs all the unit tests with race detector
-	go test -count=1 -timeout 20s -race ./src/... ./test/...
+	env GOGC=off go test -count=1 -timeout 20s -race ./src/... ./test/...
 
 update:  # updates all dependencies
 	go get -u ./...
