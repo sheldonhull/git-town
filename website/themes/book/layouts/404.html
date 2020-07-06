@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="{{ .Site.Language.Lang }}">
-
   <head>
-    {{ partial "docs/html-head" . }}
-    {{ partial "docs/inject/head" . }}
+    {{ partial "docs/html-head" . }} {{ partial "docs/inject/head" . }}
 
     <style>
       .not-found {
         text-align: center;
       }
       .not-found h1 {
-        margin: .25em 0 0 0;
-        opacity: .25;
+        margin: 0.25em 0 0 0;
+        opacity: 0.25;
         font-size: 40vmin;
       }
     </style>
@@ -28,8 +26,7 @@
       </div>
     </main>
 
-    {{ partial "docs/inject/body" . }}
-    {{ template "_internal/google_analytics_async.html" . }}
+    {{ partial "docs/inject/body" . }} {{ template
+    "_internal/google_analytics_async.html" . }}
   </body>
-
-  </html>
+</html>

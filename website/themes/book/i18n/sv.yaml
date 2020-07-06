@@ -11,4 +11,4 @@
   translation: Expandera
 
 - id: bookSearchConfig
-  translation: '{ cache: true }'
+  translation: "{ cache: true }"

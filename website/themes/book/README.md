@@ -69,8 +69,10 @@ hugo server --minify --theme book
 
 ### File tree menu (default)
 
-By default theme will render pages from `content/docs` section as menu in a tree structure.  
-You can set `title` and `weight` in front matter of pages to adjust order and titles in menu.
+By default theme will render pages from `content/docs` section as menu in a tree
+structure.  
+You can set `title` and `weight` in front matter of pages to adjust order and
+titles in menu.
 
 ### Leaf bundle menu
 
@@ -116,7 +118,8 @@ Blog is not primary use case so book theme so it has only minimal features
 ### Site Configuration
 
 There are few configuration options you can add to your `config.toml` file.  
-You can also see `yaml` example [here](https://github.com/alex-shpak/hugo-book/blob/master/exampleSite/config.yaml).
+You can also see `yaml` example
+[here](https://github.com/alex-shpak/hugo-book/blob/master/exampleSite/config.yaml).
 
 ```toml
 # (Optional) Set Google Analytics if you use it to track your website.
@@ -137,39 +140,39 @@ enableGitInfo = true
 # (Optional) Theme is intended for documentation use, therefore it doesn't render taxonomy.
 # You can remove related files with config below
 disableKinds = ['taxonomy', 'taxonomyTerm']
-  
+
 [params]
   # (Optional, default true) Controls table of contents visibility on right side of pages.
   # Start and end levels can be controlled with markup.tableOfContents setting.
   # You can also specify this parameter per page in front matter.
   BookToC = true
-  
+
   # (Optional, default none) Set the path to a logo for the book. If the logo is
   # /static/logo.png then the path would be 'logo.png'
   BookLogo = 'logo.png'
-  
+
   # (Optional, default none) Set leaf bundle to render as side menu
   # When not specified file structure and weights will be used
   BookMenuBundle = '/menu'
-  
+
   # (Optional, default docs) Specify section of content to render as menu
   # You can also set value to "*" to render all sections to menu
   BookSection = 'docs'
-  
+
   # Set source repository location.
   # Used for 'Last Modified' and 'Edit this page' links.
   BookRepo = 'https://github.com/alex-shpak/hugo-book'
-  
+
   # Enable 'Edit this page' links for 'doc' page type.
   # Disabled by default. Uncomment to enable. Requires 'BookRepo' param.
   # Path must point to the site directory.
   BookEditPath = 'edit/master/exampleSite'
-  
+
   # (Optional, default January 2, 2006) Configure the date format used on the pages
   # - In git information
   # - In blog posts
   BookDateFormat = 'Jan 2, 2006'
-  
+
   # (Optional, default true) Enables search function with flexsearch,
   # Index is built on fly, therefore it might slowdown your website.
   # Configuration for indexing can be adjusted in i18n folder per language.
@@ -193,7 +196,11 @@ disableKinds = ['taxonomy', 'taxonomyTerm']
 ```
 
 ### Multi-Language Support
-Theme supports Hugo's [multilingual mode](https://gohugo.io/content-management/multilingual/), just follow configuration guide there. You can also tweak search indexing configuration per language in `i18n` folder.
+
+Theme supports Hugo's
+[multilingual mode](https://gohugo.io/content-management/multilingual/), just
+follow configuration guide there. You can also tweak search indexing
+configuration per language in `i18n` folder.
 
 ### Page Configuration
 
@@ -247,7 +254,8 @@ There are few empty partials you can override in `layouts/partials/`
 
 ### Plugins
 
-There are few features implemented as plugable `scss` styles. Usually this are features that doesn't make it to the core but still might be useful.
+There are few features implemented as plugable `scss` styles. Usually this are
+features that doesn't make it to the core but still might be useful.
 
 | Plugin                            | Description                                                 |
 | --------------------------------- | ----------------------------------------------------------- |
@@ -255,7 +263,9 @@ There are few features implemented as plugable `scss` styles. Usually this are f
 | `assets/plugins/_numbered.scss`   | Makes headings in markdown numbered, e.g. `1.1`, `1.2`      |
 | `assets/plugins/_scrollbars.scss` | Overrides scrollbar styles to look similar across platforms |
 
-To enable plugin add `@import "plugins/{name}";` to `assets/_custom.scss` in your website root. Exception is `_dark.scss` which contains only variables and should be added to `assets/_variables.scss`.
+To enable plugin add `@import "plugins/{name}";` to `assets/_custom.scss` in
+your website root. Exception is `_dark.scss` which contains only variables and
+should be added to `assets/_variables.scss`.
 
 ### Hugo Internal Templates
 
@@ -266,27 +276,34 @@ There are few hugo templates inserted in `<head>`
 
 ## Shortcodes
 
- - [Buttons](https://themes.gohugo.io/theme/hugo-book/docs/shortcodes/buttons/)
- - [Columns](https://themes.gohugo.io/theme/hugo-book/docs/shortcodes/columns/)
- - [Expand](https://themes.gohugo.io/theme/hugo-book/docs/shortcodes/expand/)
- - [Hints](https://themes.gohugo.io/theme/hugo-book/docs/shortcodes/hints/)
- - [KaTeX](https://themes.gohugo.io/theme/hugo-book/docs/shortcodes/katex/)
- - [Mermaid](https://themes.gohugo.io/theme/hugo-book/docs/shortcodes/mermaid/)
- - [Tabs](https://themes.gohugo.io/theme/hugo-book/docs/shortcodes/tabs/)
- 
-By default, Goldmark trims unsafe output which might prevent some shortcodes from rendeting. It's recommended to set `markup.goldmark.renderer.unsafe=true` in case of problems.
+- [Buttons](https://themes.gohugo.io/theme/hugo-book/docs/shortcodes/buttons/)
+- [Columns](https://themes.gohugo.io/theme/hugo-book/docs/shortcodes/columns/)
+- [Expand](https://themes.gohugo.io/theme/hugo-book/docs/shortcodes/expand/)
+- [Hints](https://themes.gohugo.io/theme/hugo-book/docs/shortcodes/hints/)
+- [KaTeX](https://themes.gohugo.io/theme/hugo-book/docs/shortcodes/katex/)
+- [Mermaid](https://themes.gohugo.io/theme/hugo-book/docs/shortcodes/mermaid/)
+- [Tabs](https://themes.gohugo.io/theme/hugo-book/docs/shortcodes/tabs/)
+
+By default, Goldmark trims unsafe output which might prevent some shortcodes
+from rendeting. It's recommended to set `markup.goldmark.renderer.unsafe=true`
+in case of problems.
 
 ```toml
 [markup.goldmark.renderer]
   unsafe = true
 ```
-If you are using ```config.yaml``` or ```config.json```, consult [configuration markup](https://gohugo.io/getting-started/configuration-markup/)
+
+If you are using `config.yaml` or `config.json`, consult
+[configuration markup](https://gohugo.io/getting-started/configuration-markup/)
 
 ## Versioning
 
-Theme follows simple incremental versioning. e.g. `v1`, `v2` and so on. There might be breaking changes between versions.
+Theme follows simple incremental versioning. e.g. `v1`, `v2` and so on. There
+might be breaking changes between versions.
 
-If you want lower maintenance use one of released versions. If you want to live on the edge of changes you can use `master` branch and update your website when needed.
+If you want lower maintenance use one of released versions. If you want to live
+on the edge of changes you can use `master` branch and update your website when
+needed.
 
 ## Contributing
 
@@ -300,4 +317,5 @@ Primary goals are:
 - Avoid interference with user-defined layouts.
 - Avoid using JS if it can be solved by CSS.
 
-Feel free to open issue if you missing some configuration or customisation option.
+Feel free to open issue if you missing some configuration or customisation
+option.

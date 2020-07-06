@@ -1,19 +1,18 @@
 <nav>
   <ul>
-  {{ range $term, $_ := .Site.Taxonomies }}
-    {{ with $.Site.GetPage (printf "/%s" $term | urlize) }}
+    {{ range $term, $_ := .Site.Taxonomies }} {{ with $.Site.GetPage (printf
+    "/%s" $term | urlize) }}
     <li class="book-section-flat">
       <strong>{{ .Title | title }}</strong>
       <ul>
-      {{ range .Pages }}
+        {{ range .Pages }}
         <li class="flex justify-between">
           <a href="{{ .RelPermalink }}">{{ .Title }}</a>
           <span>{{ len .Pages }}</span>
         </li>
-      {{ end }}
+        {{ end }}
       </ul>
     </li>
-    {{ end }}
-  {{ end }}
+    {{ end }} {{ end }}
   </ul>
 </nav>

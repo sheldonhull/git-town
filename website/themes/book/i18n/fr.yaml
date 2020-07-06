@@ -11,4 +11,4 @@
   translation: Développer
 
 - id: bookSearchConfig
-  translation: '{ cache: true }'
+  translation: "{ cache: true }"

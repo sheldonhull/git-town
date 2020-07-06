@@ -2,17 +2,18 @@
 title: With ToC
 weight: 1
 ---
+
 # Caput vino delphine in tamen vias
 
 ## Cognita laeva illo fracta
 
 Lorem markdownum pavent auras, surgit nunc cingentibus libet **Laomedonque que**
-est. Pastor [An](http://est.org/ire.aspx) arbor filia foedat, ne [fugit
-aliter](http://www.indiciumturbam.org/moramquid.php), per. Helicona illas et
-callida neptem est *Oresitrophos* caput, dentibus est venit. Tenet reddite
+est. Pastor [An](http://est.org/ire.aspx) arbor filia foedat, ne
+[fugit aliter](http://www.indiciumturbam.org/moramquid.php), per. Helicona illas
+et callida neptem est _Oresitrophos_ caput, dentibus est venit. Tenet reddite
 [famuli](http://www.antro-et.net/) praesentem fortibus, quaeque vis foret si
-frondes *gelidos* gravidae circumtulit [inpulit armenta
-nativum](http://incurvasustulit.io/illi-virtute.html).
+frondes _gelidos_ gravidae circumtulit
+[inpulit armenta nativum](http://incurvasustulit.io/illi-virtute.html).
 
 1. Te at cruciabere vides rubentis manebo
 2. Maturuit in praetemptat ruborem ignara postquam habitasse
@@ -29,15 +30,15 @@ excutiunt concipit.
 
 > Phrygiae petendo suisque extimuit, super, pars quod audet! Turba negarem.
 > Fuerat attonitus; et dextra retinet sidera ulnas undas instimulat vacuae
-> generis? *Agnus* dabat et ignotis dextera, sic tibi pacis **feriente at mora**
-> euhoeque *comites hostem* vestras Phineus. Vultuque sanguine dominoque [metuit
-> risi](http://iuvat.org/eundem.php) fama vergit summaque meus clarissimus
-> artesque tinguebat successor nominis cervice caelicolae.
+> generis? _Agnus_ dabat et ignotis dextera, sic tibi pacis **feriente at mora**
+> euhoeque _comites hostem_ vestras Phineus. Vultuque sanguine dominoque
+> [metuit risi](http://iuvat.org/eundem.php) fama vergit summaque meus
+> clarissimus artesque tinguebat successor nominis cervice caelicolae.
 
 ## Limitibus misere sit
 
-Aurea non fata repertis praerupit feruntur simul, meae hosti lentaque *citius
-levibus*, cum sede dixit, Phaethon texta. *Albentibus summos* multifidasque
+Aurea non fata repertis praerupit feruntur simul, meae hosti lentaque _citius
+levibus_, cum sede dixit, Phaethon texta. _Albentibus summos_ multifidasque
 iungitur loquendi an pectore, mihi ursaque omnia adfata, aeno parvumque in animi
 perlucentes. Epytus agis ait vixque clamat ornum adversam spondet, quid sceptra
 ipsum **est**. Reseret nec; saeva suo passu debentia linguam terga et aures et
@@ -47,7 +48,7 @@ doluit volvitur induta?
 ## Enim sua
 
 Iuvenilior filia inlustre templa quidem herbis permittat trahens huic. In
-cruribus proceres sole crescitque *fata*, quos quos; merui maris se non tamen
+cruribus proceres sole crescitque _fata_, quos quos; merui maris se non tamen
 in, mea.
 
 ## Germana aves pignus tecta
@@ -58,7 +59,7 @@ occupat deficeret corpora, sonum. E Actaea inplevit Phinea concepit nomenque
 potest sanguine captam nulla et, in duxisses campis non; mercede. Dicere cur
 Leucothoen obitum?
 
-Postibus mittam est *nubibus principium pluma*, exsecratur facta et. Iunge
+Postibus mittam est _nubibus principium pluma_, exsecratur facta et. Iunge
 Mnemonidas pallamque pars; vere restitit alis flumina quae **quoque**, est
 ignara infestus Pyrrha. Di ducis terris maculatum At sede praemia manes
 nullaque!

@@ -8,12 +8,12 @@ weight: 20
 ## Cognita laeva illo fracta
 
 Lorem markdownum pavent auras, surgit nunc cingentibus libet **Laomedonque que**
-est. Pastor [An](http://est.org/ire.aspx) arbor filia foedat, ne [fugit
-aliter](http://www.indiciumturbam.org/moramquid.php), per. Helicona illas et
-callida neptem est *Oresitrophos* caput, dentibus est venit. Tenet reddite
+est. Pastor [An](http://est.org/ire.aspx) arbor filia foedat, ne
+[fugit aliter](http://www.indiciumturbam.org/moramquid.php), per. Helicona illas
+et callida neptem est _Oresitrophos_ caput, dentibus est venit. Tenet reddite
 [famuli](http://www.antro-et.net/) praesentem fortibus, quaeque vis foret si
-frondes *gelidos* gravidae circumtulit [inpulit armenta
-nativum](http://incurvasustulit.io/illi-virtute.html).
+frondes _gelidos_ gravidae circumtulit
+[inpulit armenta nativum](http://incurvasustulit.io/illi-virtute.html).
 
 1. Te at cruciabere vides rubentis manebo
 2. Maturuit in praetemptat ruborem ignara postquam habitasse
