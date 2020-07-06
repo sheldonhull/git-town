@@ -1,0 +1,14 @@
+baseURL: "http://example.org/"
+languageCode: "en-us"
+title: "Git Town"
+theme: "book"
+
+params:
+  BookToC: false
+  BookLogo: "logo.png"
+
+menu:
+  after:
+    - name: "Github"
+      url: "https://github.com/git-town/git-town"
+      weight: 10

@@ -1,7 +1,0 @@
-baseURL = "http://example.org/"
-languageCode = "en-us"
-title = "Git Town"
-theme = "book"
-
-[params]
-  BookToC = false
