@@ -1,11 +1,11 @@
 baseURL: "http://example.org/"
 languageCode: "en-us"
-title: "Git Town"
+title: ""
 theme: "book"
 
 params:
   BookToC: false
-  BookLogo: "logo.png"
+  BookLogo: "logo.svg"
 
 menu:
   after:
