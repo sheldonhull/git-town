@@ -3,12 +3,22 @@ languageCode: "en-us"
 title: ""
 theme: "book"
 
-params:
-  BookToC: false
-  BookLogo: "logo.svg"
+# Needed for mermaid/katex shortcodes
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
 
 menu:
   after:
     - name: "Github"
       url: "https://github.com/git-town/git-town"
       weight: 10
+
+params:
+  BookToC: false
+  BookLogo: "logo.svg"
+  BookRepo: https://github.com/git-town/git-town
+  BookEditPath: edit/master/git-town
+  BookSearch: false
+  BookSection: "/"
