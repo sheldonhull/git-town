@@ -1,4 +1,7 @@
 baseURL = "http://example.org/"
 languageCode = "en-us"
-title = "My New Hugo Site"
+title = "Git Town"
 theme = "book"
+
+[params]
+  BookToC = false
