@@ -1,7 +1,9 @@
 ![Git Town](https://raw.githubusercontent.com/git-town/git-town/master/website/img/git-town-horizontal.svg)
 
+## High level CLI for Git
+
 Git Town adds a layer of high-level workflow commands to Git's command-line
-interface. They make Git more efficient for collaborative software development.
+interface that make it more efficient for collaborative software development.
 
 <br>
 
