@@ -8,4 +8,8 @@
     {{- .Content -}}
   </p>
 </article>
-{{ end }} {{ define "toc" }} {{ partial "docs/toc" . }} {{ end }}
+{{ end }}
+
+{{ define "toc" }}
+  {{ partial "docs/toc" . }}
+{{ end }}
