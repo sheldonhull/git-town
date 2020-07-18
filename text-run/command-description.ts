@@ -1,6 +1,7 @@
-const child_process = require("child_process")
-const diff = require("assert-no-diff")
-const getCommand = require("./helpers/get-command.js")
+import * as child_process from "child_process"
+import * as diff from "assert-no-diff"
+import * as getCommand from "./helpers/get-command.js"
+import { ActionArgs } from "./tools/text-runner"
 
 module.exports = async function (activity) {
   const mdDesc = getMd(activity)
@@ -8,10 +9,10 @@ module.exports = async function (activity) {
   diff.trimmedLines(mdDesc, cliDesc)
 }
 
-function getMd(activity) {
+function getMd(activity: ActionArgs) {
   let text = ""
   let isInternalLink = false
-  for (node of activity.nodes) {
+  for (const node of activity.nodes) {
     switch (node.type) {
       case "text":
         text += node.content + " "
