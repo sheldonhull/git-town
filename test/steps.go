@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -104,11 +105,16 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 	suite.Step(`^Git Town is (?:now|still) aware of this branch hierarchy$`, func(input *messages.PickleStepArgument_PickleTable) error {
 		table := DataTable{}
 		table.AddRow("BRANCH", "PARENT")
-		for _, row := range input.Rows[1:] {
-			branch := row.Cells[0].Value
-			state.gitEnv.DevRepo.Config.Reload()
-			parentBranch := state.gitEnv.DevRepo.Config.GetParentBranch(branch)
-			table.AddRow(branch, parentBranch)
+		state.gitEnv.DevRepo.Config.Reload()
+		// Table sorted by child branch name
+		parentBranchMap := state.gitEnv.DevRepo.Config.GetParentBranchMap()
+		childBranches := make([]string, 0, len(parentBranchMap))
+		for child := range parentBranchMap {
+			childBranches = append(childBranches, child)
+		}
+		sort.Strings(childBranches)
+		for _, child := range childBranches {
+			table.AddRow(child, parentBranchMap[child])
 		}
 		diff, errCount := table.EqualGherkin(input)
 		if errCount > 0 {
@@ -129,18 +135,6 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 
 	suite.Step(`^I am collaborating with a coworker$`, func() error {
 		return state.gitEnv.AddCoworkerRepo()
-	})
-
-	suite.Step(`^I am in the project root folder$`, func() error {
-		actual, err := state.gitEnv.DevRepo.LastActiveDir()
-		if err != nil {
-			return fmt.Errorf("cannot determine the current working directory: %w", err)
-		}
-		expected := state.gitEnv.DevRepo.WorkingDir()
-		if actual != expected {
-			return fmt.Errorf("expected to be in %q but am in %q", expected, actual)
-		}
-		return nil
 	})
 
 	suite.Step(`^I am not prompted for any parent branches$`, func() error {
@@ -298,7 +292,6 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		table := RenderExecutedGitCommands(commands, input)
 		dataTable := FromGherkin(input)
 		expanded, err := dataTable.Expand(
-			state.gitEnv.DevRepo.WorkingDir(),
 			&state.gitEnv.DevRepo,
 			state.gitEnv.OriginRepo,
 		)

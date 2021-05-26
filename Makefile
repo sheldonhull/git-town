@@ -1,12 +1,5 @@
-VERSION=7.4.0
+VERSION ?= 0.0.0
 TODAY=$(shell date +'%Y/%m/%d')
-
-# platform-specificity
-ifdef COMSPEC
-	/ := $(strip \)
-else
-	/ := /
-endif
 
 .DEFAULT_GOAL := spec
 
@@ -22,7 +15,7 @@ cuke-prof: build  # creates a flamegraph
 	@echo Please open https://www.speedscope.app and load the file godog.out
 
 docs:  # tests the documentation
-	tools$/text-runner$/node_modules$/.bin$/text-run --offline
+	${CURDIR}/text-run/node_modules/.bin/text-run --offline
 
 fix: fix-go fix-md  # auto-fixes lint issues in all languages
 
@@ -30,7 +23,7 @@ fix-go:  # auto-fixes all Go lint issues
 	gofmt -s -w ./src ./test
 
 fix-md:  # auto-fixes all Markdown lint issues
-	tools$/prettier$/node_modules$/.bin$/prettier --write .
+	${CURDIR}/tools/prettier/node_modules/.bin/prettier --write .
 
 help:  # prints all make targets
 	@cat Makefile | grep '^[^ ]*:' | grep -v '.PHONY' | grep -v help | sed 's/:.*#/#/' | column -s "#" -t
@@ -47,32 +40,32 @@ lint-go:  # lints the Go files
 	golangci-lint run src/... test/...
 
 lint-md:   # lints the Markdown files
-	tools$/prettier$/node_modules$/.bin$/prettier -l .
+	${CURDIR}/tools/prettier/node_modules/.bin/prettier -l .
 
-release:   # creates a new release
+release-linux:   # creates a new release
 	# cross-compile the binaries
 	goreleaser --rm-dist
 
-	# make Windows installer
-	make --no-print-directory msi
-
 	# create GitHub release with files in alphabetical order
-	hub release create --draft --browse --message v7.4.0 \
-		-a dist/git-town_7.4.0_linux_intel_64.deb \
-		-a dist/git-town_7.4.0_linux_intel_64.rpm \
-		-a dist/git-town_7.4.0_linux_intel_64.tar.gz \
-		-a dist/git-town_7.4.0_linux_arm_64.deb \
-		-a dist/git-town_7.4.0_linux_arm_64.rpm \
-		-a dist/git-town_7.4.0_linux_arm_64.tar.gz \
-		-a dist/git-town_7.4.0_macOS_intel_64.tar.gz \
-		-a dist/git-town_7.4.0_windows_intel_64.msi \
-		-a dist/git-town_7.4.0_windows_intel_64.zip \
+	hub release create --draft --browse --message v${VERSION} \
+		-a dist/git-town_${VERSION}_linux_intel_64.deb \
+		-a dist/git-town_${VERSION}_linux_intel_64.rpm \
+		-a dist/git-town_${VERSION}_linux_intel_64.tar.gz \
+		-a dist/git-town_${VERSION}_linux_arm_64.deb \
+		-a dist/git-town_${VERSION}_linux_arm_64.rpm \
+		-a dist/git-town_${VERSION}_linux_arm_64.tar.gz \
+		-a dist/git-town_${VERSION}_macOS_intel_64.tar.gz \
+		-a dist/git-town_${VERSION}_windows_intel_64.zip \
+		v${VERSION}
+
+release-win: msi  # adds the Windows installer to the release
+	hub release edit --browse --message v${VERSION} \
+		-a dist/git-town_${VERSION}_windows_intel_64.msi
 		v${VERSION}
 
 setup: setup-go  # the setup steps necessary on developer machines
 	cd tools/prettier && yarn install
-	cd tools/text-runner && yarn install
-	cd tools/harp && yarn install
+	cd text-run && yarn install
 
 setup-go:
 	@(cd .. && GO111MODULE=on go get github.com/cucumber/godog/cmd/godog@v0.9.0)
@@ -99,16 +92,9 @@ update:  # updates all dependencies
 	go mod tidy
 	go mod vendor
 
-website:  # deploys the website
-	git checkout gh-pages
-	git pull
-	git checkout master
-	git pull --rebase
-	tools/harp/node_modules/.bin/harp compile website/ _www
-	git checkout gh-pages
-	cp -r _www/* .
-	rm -rf _www
-	git add -A
-	git commit
-	git push
-	git checkout master
+website-build:  # compiles the website (used during deployment)
+	(cd tools/harp && yarn install)
+	tools/harp/node_modules/.bin/harp compile website/ www
+
+website-dev:  # runs a local development server of the website
+	(cd website && ../tools/harp/node_modules/.bin/harp server)

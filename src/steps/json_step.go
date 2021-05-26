@@ -45,8 +45,6 @@ func getStep(stepType string) Step {
 		return &AbortRebaseBranchStep{}
 	case "*AddToPerennialBranches":
 		return &AddToPerennialBranches{}
-	case "*ChangeDirectoryStep":
-		return &ChangeDirectoryStep{}
 	case "*CheckoutBranchStep":
 		return &CheckoutBranchStep{}
 	case "*ContinueMergeBranchStep":
@@ -67,10 +65,14 @@ func getStep(stepType string) Step {
 		return &DeleteParentBranchStep{}
 	case "*DeleteRemoteBranchStep":
 		return &DeleteRemoteBranchStep{}
+	case "*DiscardOpenChangesStep":
+		return &DiscardOpenChangesStep{}
 	case "*DriverMergePullRequestStep":
 		return &DriverMergePullRequestStep{}
 	case "*EnsureHasShippableChangesStep":
 		return &EnsureHasShippableChangesStep{}
+	case "*FetchUpstreamStep":
+		return &FetchUpstreamStep{}
 	case "*MergeBranchStep":
 		return &MergeBranchStep{}
 	case "*NoOpStep":
